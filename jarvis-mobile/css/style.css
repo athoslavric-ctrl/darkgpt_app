@@ -1,0 +1,260 @@
+/* ============================================================
+   JARVIS MOBILE — stil global
+   Aceeași identitate vizuală ca HUD-ul desktop:
+   fundal #04080f, cyan #00e5ff, auriu #ffc857,
+   verde #27f5a3, roșu #ff4d6d, colțuri tăiate (clip-path)
+   ============================================================ */
+:root{
+  --bg:#04080f;
+  --panel:rgba(8,18,32,.72);
+  --line:rgba(0,229,255,.18);
+  --cyan:#00e5ff;
+  --cyan-dim:rgba(0,229,255,.45);
+  --gold:#ffc857;
+  --green:#27f5a3;
+  --red:#ff4d6d;
+  --text:#c8e7f2;
+  --muted:#5d8296;
+  /* safe-area pentru telefoane cu notch / gesture bar */
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+  --tabbar-h:64px;
+  --banner-h:22px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  overflow:hidden;                     /* scroll doar în interiorul ecranelor */
+  touch-action:manipulation;           /* fără zoom la dublu-tap */
+  -webkit-user-select:none;user-select:none;
+  display:flex;flex-direction:column;
+}
+
+/* grilă animată de fundal, ca pe desktop */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,229,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,.05) 1px,transparent 1px);
+  background-size:36px 36px;
+  mask-image:radial-gradient(ellipse at 50% 30%,black 30%,transparent 80%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,229,255,.08),transparent 55%);
+}
+
+/* ===== HEADER ===== */
+.app-header{
+  position:relative;z-index:2;flex:none;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(8px + var(--sat)) 16px 8px;
+  border-bottom:1px solid var(--line);
+  background:rgba(4,8,15,.85);backdrop-filter:blur(8px);
+}
+.brand h1{
+  font-family:'Orbitron',sans-serif;font-weight:900;font-size:17px;letter-spacing:4px;
+  color:#eafcff;text-shadow:0 0 18px rgba(0,229,255,.55);
+}
+.brand h1 span{color:var(--cyan)}
+.brand .sub{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.sys{display:flex;flex-direction:column;align-items:flex-end;gap:2px;
+  font-family:'JetBrains Mono',monospace;font-size:11px}
+.sys .val{color:var(--green)}
+.sys .clock{color:var(--cyan);text-shadow:0 0 8px rgba(0,229,255,.6)}
+.pulse-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 10px var(--green);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+
+/* ===== ECRANE ===== */
+.screens{position:relative;z-index:1;flex:1;overflow:hidden}
+.screen{
+  position:absolute;inset:0;display:none;flex-direction:column;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:14px 14px calc(var(--tabbar-h) + var(--banner-h) + var(--sab) + 14px);
+}
+.screen.active{display:flex;animation:screenIn .25s ease}
+@keyframes screenIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.screen-title{
+  font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:3px;
+  color:var(--cyan);text-transform:uppercase;text-shadow:0 0 10px rgba(0,229,255,.4);
+  margin-bottom:12px;
+}
+
+/* panou cu colțuri tăiate — semnătura vizuală Jarvis */
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  position:relative;backdrop-filter:blur(6px);
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));
+}
+
+/* ===== ECRAN NUCLEU ===== */
+.reactor{position:relative;width:150px;height:150px;margin:10px auto 4px;flex:none}
+.reactor .ring{position:absolute;inset:0;border-radius:50%;border:1px solid var(--cyan-dim)}
+.ring.r1{animation:spin 14s linear infinite;border-style:dashed}
+.ring.r2{inset:13px;animation:spin 9s linear infinite reverse;
+  border-top-color:var(--cyan);border-top-width:3px;box-shadow:0 0 24px rgba(0,229,255,.25)}
+.ring.r3{inset:27px;animation:spin 22s linear infinite;border-style:dotted}
+.ring.r4{inset:41px;border:2px solid rgba(0,229,255,.35);animation:coreGlow 3s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes coreGlow{
+  0%,100%{box-shadow:0 0 22px rgba(0,229,255,.35),inset 0 0 22px rgba(0,229,255,.18)}
+  50%{box-shadow:0 0 46px rgba(0,229,255,.7),inset 0 0 34px rgba(0,229,255,.4)}
+}
+.reactor .core-c{
+  position:absolute;inset:54px;border-radius:50%;
+  background:radial-gradient(circle,#d9fbff 0%,var(--cyan) 42%,rgba(0,90,120,.9) 100%);
+  box-shadow:0 0 40px rgba(0,229,255,.8);
+  display:flex;align-items:center;justify-content:center;
+  animation:coreGlow 3s ease-in-out infinite;
+}
+.reactor .core-c span{font-family:'Orbitron',sans-serif;font-weight:900;color:#022;font-size:9px;letter-spacing:1px}
+
+.voice-line{display:flex;align-items:center;gap:10px;justify-content:center;margin:6px 0}
+.eq{display:flex;gap:3px;align-items:flex-end;height:16px}
+.eq i{width:3px;background:var(--cyan);box-shadow:0 0 6px var(--cyan);animation:eq .9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.15s}.eq i:nth-child(3){animation-delay:.3s}
+.eq i:nth-child(4){animation-delay:.45s}.eq i:nth-child(5){animation-delay:.6s}
+@keyframes eq{0%,100%{height:4px}50%{height:16px}}
+.voice-status{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);letter-spacing:2px}
+
+.speech{
+  margin-bottom:12px;padding:12px 14px;min-height:96px;flex:none;
+  border:1px solid var(--line);border-left:3px solid var(--cyan);
+  background:rgba(0,229,255,.04);
+  font-size:15px;line-height:1.5;color:#eafcff;
+}
+.speech .who{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;color:var(--cyan);display:block;margin-bottom:6px}
+.speech .txt::after{content:'▊';color:var(--cyan);animation:blink 1s infinite}
+
+/* cardul semnalului activ pe ecranul principal */
+.active-signal{padding:12px 14px;margin-bottom:12px}
+.active-signal .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.active-signal .asset{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:#eafcff}
+.active-signal .price-line{font-family:'JetBrains Mono',monospace;font-size:13px}
+.active-signal .reason{font-size:14px;line-height:1.4;color:var(--text);margin:8px 0}
+
+/* butoane mari, prietenoase cu degetul (≥56px) */
+.actions{display:flex;gap:12px;margin-top:auto;flex:none}
+.btn{
+  flex:1;min-height:56px;padding:14px 0;
+  font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;
+  cursor:pointer;border:1px solid;background:transparent;transition:.15s;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);
+}
+.btn.ok{color:var(--green);border-color:var(--green)}
+.btn.no{color:var(--red);border-color:var(--red)}
+/* :active în loc de :hover — pe touch nu există hover */
+.btn.ok:active{background:rgba(39,245,163,.18);box-shadow:0 0 18px rgba(39,245,163,.35)}
+.btn.no:active{background:rgba(255,77,109,.18);box-shadow:0 0 18px rgba(255,77,109,.35)}
+.btn:disabled{opacity:.35}
+
+/* ===== ECRAN SEMNALE ===== */
+.feed{display:flex;flex-direction:column;gap:10px}
+.news{
+  border:1px solid var(--line);padding:12px;position:relative;
+  background:rgba(4,12,22,.6);
+}
+.news.hot{border-left:3px solid var(--gold);animation:hotIn .5s ease}
+@keyframes hotIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.news .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.news .src{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px}
+.news .time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.news .title{font-size:15px;font-weight:600;line-height:1.35;color:#dff4fb;margin-bottom:8px}
+.news .reason{font-size:13.5px;line-height:1.4;color:var(--text);margin-bottom:8px}
+
+.scores{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 9px;border:1px solid;letter-spacing:1px}
+.chip.long{color:var(--green);border-color:rgba(39,245,163,.5);text-shadow:0 0 8px rgba(39,245,163,.4)}
+.chip.short{color:var(--red);border-color:rgba(255,77,109,.5);text-shadow:0 0 8px rgba(255,77,109,.4)}
+.chip.none{color:var(--muted);border-color:rgba(93,130,150,.3)}
+.chip.i{color:var(--gold);border-color:rgba(255,200,87,.4)}
+.chip.c{color:var(--cyan);border-color:var(--cyan-dim)}
+.bar{height:3px;background:rgba(0,229,255,.12);margin-top:9px;position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0;transform-origin:left;background:linear-gradient(90deg,var(--cyan),var(--gold))}
+
+/* ===== ECRAN POZIȚII (carduri, nu tabel) ===== */
+.pos-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.pos-card{padding:12px 14px}
+.pos-card .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pos-card .sym{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:#eafcff}
+.pos-card .grid2{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+}
+.pos-card .grid2 .lbl{color:var(--muted);font-size:10px;letter-spacing:1px;display:block}
+.pos-card .pnl{font-size:16px;font-weight:700}
+.dir-l{color:var(--green);text-shadow:0 0 8px rgba(39,245,163,.4)}
+.dir-s{color:var(--red);text-shadow:0 0 8px rgba(255,77,109,.4)}
+.pnl-p{color:var(--green)}.pnl-n{color:var(--red)}
+.st-active{color:var(--cyan)}.st-closed{color:var(--muted)}
+
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--line);background:var(--panel);
+}
+.stat{padding:12px 8px;border:0 solid var(--line);border-right-width:1px;border-bottom-width:1px;text-align:center}
+.stat:nth-child(3n){border-right-width:0}
+.stat:nth-last-child(-n+3){border-bottom-width:0}
+.stat .n{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:700;color:var(--cyan);text-shadow:0 0 12px rgba(0,229,255,.45)}
+.stat .n.g{color:var(--green);text-shadow:0 0 12px rgba(39,245,163,.45)}
+.stat .l{font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-top:3px}
+
+/* ===== ECRAN GRAFIC ===== */
+.chart-meta{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.chart-meta .pair{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:#eafcff;letter-spacing:2px}
+.chart-meta .price{font-family:'JetBrains Mono',monospace;font-size:21px;color:var(--green);text-shadow:0 0 12px rgba(39,245,163,.5)}
+.chart-meta .chg{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green)}
+canvas#chart{width:100%;height:300px;display:block;flex:none}
+.levels{display:flex;gap:8px;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;flex-wrap:wrap}
+.levels .lv{padding:6px 10px;border:1px solid var(--line)}
+.lv.entry{color:var(--cyan);border-color:var(--cyan-dim)}
+.lv.tp{color:var(--green);border-color:rgba(39,245,163,.4)}
+.lv.sl{color:var(--red);border-color:rgba(255,77,109,.4)}
+
+/* ===== BANNER DEMO + TAB BAR ===== */
+.demo-banner{
+  position:fixed;left:0;right:0;bottom:calc(var(--tabbar-h) + var(--sab));z-index:3;
+  height:var(--banner-h);line-height:var(--banner-h);text-align:center;
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;
+  color:var(--gold);background:rgba(255,200,87,.07);
+  border-top:1px solid rgba(255,200,87,.25);
+}
+
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:4;
+  height:calc(var(--tabbar-h) + var(--sab));
+  padding-bottom:var(--sab);                 /* safe-area sub gesture bar */
+  display:flex;
+  background:rgba(4,10,18,.95);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);
+}
+.tab{
+  flex:1;min-height:48px;                    /* touch target ≥48px */
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  background:transparent;border:none;cursor:pointer;
+  color:var(--muted);transition:.15s;position:relative;
+}
+.tab .ico{font-size:19px;line-height:1}
+.tab .lbl{font-family:'Orbitron',sans-serif;font-size:8.5px;letter-spacing:1.5px}
+.tab.active{color:var(--cyan);text-shadow:0 0 10px rgba(0,229,255,.6)}
+.tab.active::before{
+  content:'';position:absolute;top:0;left:20%;right:20%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  box-shadow:0 0 10px var(--cyan);
+}
+/* punct de notificare pe tab când sosește un semnal nou */
+.tab .dot{
+  position:absolute;top:8px;right:calc(50% - 16px);width:7px;height:7px;border-radius:50%;
+  background:var(--gold);box-shadow:0 0 8px var(--gold);display:none;
+}
+.tab.has-new .dot{display:block}
+
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
